@@ -1,0 +1,56 @@
+ ###########################
+ #conveyor tracker settings#
+ ###########################
+ 
+ #all length values are defined in meter
+ 
+#general variables
+multiThreaded: true
+multiObjectTracking: false
+
+#variables for clustering the pointcloud
+clustersize_min: 800                    #object has to contain at least this much points to be recognized
+clustersize_max: 3500                   #if object has more than this much points it isn't recognized as a grippable object anymore
+cluster_min_distance: 0.15              #if other clusters are within this distance, none of them is recognized as an object
+cluster_min_height: 0.04                #clusters smaller than this value are not recognized as an object
+
+
+#variables for object recognition and reconstruction
+object_minheight: 0.08                  #minimal object HEIGHT 
+object_maxwidth: 0.1                    #maximum object WIDTH
+object_handle_minsize: 50               #minimal point resolution of potential object handles
+object_conveyor_offset: 0.05            #object is only recognized starting this far off the conveyor plane
+reconstruct_res: 32                     #defines the amount of points forming horizontal circles for the object mesh
+
+circle_segment_height: 0.012            #height of one segment slice (for ransac circle and object radius calculation)
+circle_segment_min_points: 50           #minimal amount of points required in segment for it to be calculated by ransac
+
+matching_distance_threshold: 0.10       #distance at which observed and tracked object are recognized as one (default = 0.1)
+object_reconstruction_angle: 22.5       #after viewing the same object from this different view angle the reconstructed object is updated (default = 22.5)
+voxel_grid_size: 0.001                  #size of one voxel grid
+icp_slice_height: 0.01                  #height of one horizontal slice using iterative closest point algorithm
+
+historyLength: 30                       #defines for how much consecutive frames an object has to be tracked to be further processed
+wrlFilePath: '../svn-KUKAOR/ORData/Models/Objects/objectTracking/rotationalBody.wrl'  #file path to store the object mesh
+
+#variable for conveyor recognition
+recordConveyor: false                   #defines whether the conveyor trajectory should be re-recorded (else the last recorded trajectory is fetched from the yaml file)
+
+#variables for robot communication
+simulated: true                         #triggers if the robot is simulated or real
+robot_delay: 0.5                        #maximum time it takes to communicate with the rsi_node and calculate a new trajectory in jointStates (default = 0.5)
+robot_tact_time: 0.012                  #tact time of the used robot 
+      
+      
+#variables for object gripping
+interceptionTime: 5.0                   #first guess for the time from robot start to interception
+gripperApproachTime: 2.5                #time in seconds which the gripper should use for approaching and taking off the object
+grippingTime: 4.5                       #time in seconds which the robot follows the object horizontally to enable gripping (standard = 4.5)
+verticalApproachDistance: 0.125         #distance for the initial vertical distance between gripper and object
+gripperVerticalTCPStandoff: 0.06        #defines how deep the object is overlapped by the closed SDH (SDH tip to object tip) (standard = 0.05)
+fixedTCPRotation: 0.0                 #defines a constant rotation in degree of the gripper respective to its original tcp (standard = 0.0)
+initialRobotPose: [0.0, -1.57079633, 1.57079633, 0.0, 1.57079633, 1.57079633]  #joint values defining the robot starting pose
+openGripperPose: [1.0471976, -1.57079, 0.0, -1.57079, 0.0, -1.57079, 0.0]      #joint values of the SDH defining an open 120deg triangle finger position
+                #[1.0471976, -1.57079, 0.0, -1.57079, 0.0, -1.57079, 0.0]   120deg pose
+grippingCommandEffort: 50.0              #defines the force with which the SDH grippes the object
+

@@ -1,0 +1,5 @@
+child_frame_id: conveyor_plane
+frame_id: kinect2_depth_frame
+transform:
+  rotation: [-0.874557614326477, 0.002748333616182208, 0.0, 0.4849139153957367]
+  translation: [-0.7994409799575806, -0.2755085229873657, 1.2670000791549683]

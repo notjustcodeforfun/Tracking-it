@@ -1,0 +1,5 @@
+child_frame_id: kuka
+frame_id: kinect2_depth_frame
+transform:
+  rotation: [0.62434, -0.61237, -0.33197, -0.35355]
+  translation: [0.08147019892930984, -0.18754369020462036, 1.3236883878707886]
