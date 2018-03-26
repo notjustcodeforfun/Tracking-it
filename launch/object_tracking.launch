@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="record_conveyor_trajectory" default="0" doc="1 means intitializing / re-recording conveyorTrajectory" />
+  <!--load latest transformations from storage-->
+  <rosparam ns="kinect2conveyor" command="load" file="$(find conveyor_object_tracking)/config/kinect2conveyor_tf.yaml" />
+  <rosparam ns="kinect2kuka" command="load" file="$(find conveyor_object_tracking)/config/kinect2kuka_tf.yaml" />
+  <rosparam ns="conveyorTrajectory" command="load" file="$(find conveyor_object_tracking)/config/conveyor_trajectory.yaml" unless="$(arg record_conveyor_trajectory)"/>
+  <!--launch conveyor filtering node-->
+  <node name="conveyor_filtering_node" pkg="conveyor_object_tracking" type="conveyor_filtering_node" output="screen" />
+  <node name="object_tracking_node" pkg="conveyor_object_tracking" type="object_tracking_node" output="screen" >
+    <rosparam command="load" file="$(find conveyor_object_tracking)/config/conveyor_tracking.yaml"/>
+    <param name="ObjectMeshSavePath" type="string" value="../svn-KUKAOR/ORData/Models/Objects/objectTracking/rotationalBody.wrl"/>
+    <remap from="FollowObject" to="/rsi_node/follow_object"/>
+  </node>
+</launch>

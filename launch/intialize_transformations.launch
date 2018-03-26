@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<launch> 
+  <arg name="conveyor" default="1" doc="recalculate conveyor transform" />
+  <arg name="robot" default="1" doc="recalculate robot transform" />
+  <node name="conveyor_scanning_node" pkg="conveyor_object_tracking" type="conveyor_scanning_node" output="screen" if="$(arg conveyor)" />
+  <node name="calibrate_kinect_circles" pkg="calibrate_kinect_circles" type="calibrate_kinect_circles" output="screen" if="$(arg robot)" />
+</launch>

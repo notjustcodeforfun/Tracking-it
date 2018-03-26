@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="conveyor" default="0" doc="recalculate conveyor transform" />
+  <arg name="robot" default="0" doc="recalculate robot transform" />
+  <node name="conveyor_scanning_node" pkg="conveyor_object_tracking" type="conveyor_scanning_node" output="screen" if="$(arg conveyor)" />
+  <node name="calibrate_kinect_circles" pkg="calibrate_kinect_circles" type="CalibrateKinectCirclesNode" output="screen" if="$(arg robot)" />
+  <!--load latest transformations from storage-->
+  <rosparam ns="kinect2conveyor" command="load" file="$(find conveyor_object_tracking)/config/kinect2conveyor_tf.yaml" />
+  <rosparam ns="kinect2kuka" command="load" file="$(find conveyor_object_tracking)/config/kinect2kuka_tf.yaml" />
+  <!--launch conveyor filtering node-->
+  <node name="conveyor_filtering_node" pkg="conveyor_object_tracking" type="conveyor_filtering_node" output="screen" />
+  <node name="object_tracking_node" pkg="conveyor_object_tracking" type="object_tracking_node" output="screen" />
+
+</launch>
