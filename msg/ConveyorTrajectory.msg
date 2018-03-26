@@ -1,0 +1,6 @@
+std_msgs/Header header
+float64 visibleTimeLeft
+float64 interceptionTime
+std_msgs/Float64MultiArray interceptionPoint
+std_msgs/Float64MultiArray interceptionVelocityDir
+std_msgs/Float64MultiArray[] trajectoryPoints
