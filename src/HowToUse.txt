@@ -1,0 +1,111 @@
+	
+Conveyor_scanner Node:
+	using namespace Conveyor_scanning;
+	Conveyor_scanner conveyor_scanner   
+	namespace Conveyor_scanning {Conveyor_scanner}
+	-conveyor_scanner.attach_to_node(ros_node)
+		->subscribe the points,in the "/kinect2/camera1/depth_registered/points"
+		->advertise visualization message
+			-call publish_transformation_on_rosparam() (self)//Conveyor to kinect
+		-call call back function
+			->write images
+			-call update_conveyor_plane(foreground_cloud) (self)
+			-call calculate_conveyor_transformation(foreground_cloud) (self)
+			-call send_static_conveyor_transformation()
+	-call back function(input_cloud)
+		-call background_filter.update_foreground_mask(input_cloud)
+			->_foreground_mask
+		-call background_filter.get_foreground_indices(output_indices)
+			->output_indices
+		-call background_filter.write_images(input_cloud)
+	-update_conveyor_plane(foreground_cloud)   //foreground_cloud)=f(foreground_indices,input_cloud) 
+		->get the conveyor plane
+	-calculate_conveyor_transformation(foreground_cloud)
+		->get the transformation between conveyor and Sensor frame
+	-send_static_conveyor_transformation()
+		->send visualization information
+	-publish_transformation_on_rosparam()
+
+Conveyor_filter Node:
+	using namespace Conveyor_object_tracking;
+	Conveyor_filter conveyor_filter
+	namespace Conveyor_object_tracking {Conveyor_filter}
+	-conveyor_filter.attach_to_node(ros_node)
+		->subscribe the points,in the "/kinect2/camera1/depth_registered/points"
+		->advertise object points
+		->advertise visualization message
+		->call call back function
+	-call back function
+		-call filter_objects(input_cloud)
+			->filtering the input_cloud with respect to the distance in z direction
+			->transform input_cloud into conveyor frame, and with respect to the Hight in conveyor frame to filter input_cloud
+	-publish_transformation_from_rospam
+		-to publish tramsfomation
+	-publish object poins to "conveyor_object_tracker/conveyorframe_object_points"
+
+Object_tracking node:
+	using namespace Conveyor_object_tracking;
+	Object_tracker object_tracker
+	namespace Conveyor_object_tracking {Object_tracker}
+	-object_tracker.attach_to_node
+		->subscribe "conveyor_object_tracker/conveyorframe_object_points"
+		-call call back function
+	-call back function
+		->if objectDetectedCounter>historyLength
+			find object(s) in cloud by their predicted
+		  else cluster the cloud to find object(s)
+			-call cluster_extractor to get Clustering, which ist the result of Clustering
+			-calculate all objects cluster to observedObject
+				-call calculate_object_parameters
+			-call match_objects to get maching information
+				->matching information
+			-Tracked_objects tracked_objects
+				-tracked_objects.predic_position
+				-tracked_objects.predic_velocity
+			-Conveyor_trajectory conveyorTrajectory
+				-conveyorTrajectory.updateTrajectory(Position)
+				-call generateTrajectory
+			->calculate objectVelocity
+			->Visualization
+			->update global conveyorVelocity based on new observatio
+
+		-getClusteredScenePart(...)
+			->find object in cloud by the predicted position
+		-getDenseCloud(...)
+			->cut out parts with too high distance to other ones
+		-threadSAC(...)
+			-> RANSAC
+		-calculate_object_parameters(...)
+			->calculate the object parameters (position, sllice radii, height, solidness, wall thickness,)
+		-getHandleHullpoints(...)
+			->Calculates the median plane of the handle by estimating the line of its projection on the ground (as the object lies orthogonal 
+  				on the conveyor plane and thus the handle plane is orthogonal to the conveyor plane as well). With this line calculated the
+  				points can be projected on the handle plane and their convex hull can be extracted for a representation in the mesh model.
+		-calculate_object_rim(...)
+			-> Checks the inserted PointCloud belonging for a circular disc shape to decide whether the object to which the cloud belongs is hollow or solid
+		-find_object_position(...)
+		-mirror_match_point()
+			-> Checks for the left point if a point on the right side is within a given threshold
+		-mirror_match_clouds()
+			-> checks for each point in @targetCloud if a matching point in @mirrorCloud is found
+		-separate_object_clouds()
+			->Removes the outliers by checking that every point from the left side of the object
+  				has a corresponding point within a defined sphere on the right side. As the differentiation
+  				of the object into left and right requires a good estimation of the middlepoint, this
+  				calculation can only be done in objectFrame
+		-update_object_position_object_frame(...)
+		-match_objects()
+		-recreateTrackedObject()
+		-revolutionMeshMarker()
+		-objectToWRL()
+		-calculate_object_distance()
+		-reconstruct_by_angle()
+		-cut_object()
+		-getSegmentedObject()
+			->Segments the object into horizontal slices of a given height and checks if the point-size of each slice meets the minimum number 
+ 			 to be able to calculate its circle center using RANSAC
+		-calculateSolidOfRevolution() 
+			->  Calculates the sliced object centers for an upright solid of revolution (with its rotation axis parallel to z direction)
+		-getKinectCoordinates()
+			->Transformation and format conversion functions
+	
